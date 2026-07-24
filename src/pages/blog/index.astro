@@ -1,114 +1,49 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout title="Blog · 2gyoung.dev" description="개발하며 배우고 만든 것을 기록합니다.">
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Blog</h1>
+    <p class="mt-2 text-neutral-600 dark:text-neutral-400">
+      총 {posts.length}개의 글
+    </p>
+  </header>
+
+  <ul class="divide-y divide-neutral-200 dark:divide-neutral-800">
+    {
+      posts.map((post) => (
+        <li class="py-5">
+          <a href={`/blog/${post.id}/`} class="group block">
+            <div class="flex items-baseline justify-between gap-4">
+              <h2 class="text-lg font-semibold group-hover:text-accent">
+                {post.data.title}
+              </h2>
+              <time class="shrink-0 text-sm text-neutral-500">
+                <FormattedDate date={post.data.pubDate} />
+              </time>
+            </div>
+            <p class="mt-1 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400">
+              {post.data.description}
+            </p>
+            {post.data.tags.length > 0 && (
+              <ul class="mt-2 flex flex-wrap gap-1">
+                {post.data.tags.map((tag) => (
+                  <li class="rounded bg-neutral-100 px-2 py-0.5 text-xs text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                    #{tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>
