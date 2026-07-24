@@ -47,6 +47,66 @@ kbd {
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
+/* ===========================================================
+   Markdown (.prose) overrides — restore original Astro blog
+   template look for headings, code blocks, and lists.
+   Scoped to .prose so non-blog pages are unaffected.
+   =========================================================== */
+
+/* Headings: Perfect Fourth modular scale (ratio 1.25) */
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-neutral-950);
+  line-height: 1.2;
+  font-weight: 700;
+}
+.prose h1 { font-size: 3.052em; }
+.prose h2 { font-size: 2.441em; }
+.prose h3 { font-size: 1.953em; }
+.prose h4 { font-size: 1.563em; }
+.prose h5 { font-size: 1.25em; }
+
+.dark .prose :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--color-neutral-50);
+}
+
+/* Inline code + code blocks */
+.prose code {
+  padding: 2px 5px;
+  background-color: var(--color-neutral-200);
+  border-radius: 2px;
+  font-weight: 400;
+  color: inherit;
+}
+.prose code::before,
+.prose code::after {
+  content: '';
+}
+.prose pre {
+  padding: 1.5em;
+  border-radius: 8px;
+}
+.prose pre > code {
+  all: unset;
+}
+.dark .prose code {
+  background-color: var(--color-neutral-800);
+}
+
+/* Lists: browser default (Astro template didn't customize) */
+.prose :is(ul, ol) {
+  list-style: revert;
+  padding: revert;
+  margin: revert;
+}
+.prose li {
+  padding: revert;
+  margin: revert;
+}
+.prose :is(ul, ol) > li::marker {
+  color: inherit;
+}
+
 /* Screen reader only */
 .sr-only {
   border: 0;
